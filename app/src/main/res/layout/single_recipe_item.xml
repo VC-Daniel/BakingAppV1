@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/large_button_size"
+    android:layout_margin="@dimen/default_margin"
+    android:background="@drawable/rounded_corner"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/recipeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/text_margin_small"
+        android:paddingBottom="@dimen/text_margin_small"
+        android:paddingStart="@dimen/text_margin"
+        android:paddingLeft="@dimen/text_margin"
+        android:paddingRight="@dimen/text_margin"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="@dimen/content_text_Size"
+        android:background="@color/secondaryDarkColor"
+        />
+
+    <TextView
+        android:id="@+id/singleRecipeServing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/recipeName"
+        android:layout_alignStart="@+id/recipeName"
+        android:layout_below="@+id/recipeName"
+        android:layout_marginLeft="@dimen/text_margin_large"
+        android:layout_marginStart="@dimen/text_margin_large"
+        android:layout_marginTop="@dimen/text_margin_small" />
+
+
+    <TextView
+        android:id="@+id/singleRecipeNumberOfIngredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/singleRecipeServing"
+        android:layout_alignStart="@+id/singleRecipeServing"
+        android:layout_below="@+id/singleRecipeServing"
+        android:layout_marginTop="@dimen/text_margin" />
+
+    <TextView
+        android:id="@+id/singleRecipeNumberOfSteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/singleRecipeNumberOfIngredients"
+        android:layout_alignStart="@+id/singleRecipeNumberOfIngredients"
+        android:layout_below="@+id/singleRecipeNumberOfIngredients"
+        android:layout_marginTop="@dimen/text_margin" />
+</RelativeLayout>

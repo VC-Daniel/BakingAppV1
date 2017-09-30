@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/recipeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="clip_horizontal"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/small_button_padding"
+        android:text="@string/widget_recipe_ingredients_header"
+        android:textAlignment="center"
+        android:textColor="@color/primaryTextColor" />
+
+    <!-- ListView to be shown on widget -->
+    <ListView
+        android:id="@+id/WidgetIngredientsListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Empty view is show if list items are empty -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/widget_no_recipe_selected_hint"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="@dimen/large_text_size"
+        android:visibility="gone" />
+
+</LinearLayout>
