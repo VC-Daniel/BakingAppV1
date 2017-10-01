@@ -2,10 +2,14 @@ package com.example.android.bakingapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -45,6 +49,13 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
         holder.mNumberOfServingsTextView.setText(numberOfServingsLabel);
         holder.mNumberOfIngredientsTextView.setText(numberOfIngredientsLabel);
         holder.mNumberOfStepsTextView.setText(numberOfStepsLabel);
+
+        // If there is a thumbnail for the recipe display it, otherwise hide the thumbnail view
+        if (!TextUtils.isEmpty(recipeData.thumbnailLocation)) {
+            Picasso.with(context).load(recipeData.thumbnailLocation).into(holder.mThumbnailImageView);
+        } else {
+            holder.mThumbnailImageView.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -84,6 +95,7 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
         final TextView mNumberOfIngredientsTextView;
         final TextView mNumberOfStepsTextView;
         final TextView mNumberOfServingsTextView;
+        final ImageView mThumbnailImageView;
 
         RecipeAdapterViewHolder(View view) {
             super(view);
@@ -93,6 +105,7 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
             mNumberOfIngredientsTextView = (TextView) view.findViewById(R.id.singleRecipeNumberOfIngredients);
             mNumberOfStepsTextView = (TextView) view.findViewById(R.id.singleRecipeNumberOfSteps);
             mNumberOfServingsTextView = (TextView) view.findViewById(R.id.singleRecipeServing);
+            mThumbnailImageView = (ImageView) view.findViewById(R.id.recipeThumbnailImage);
             view.setOnClickListener(this);
         }
 

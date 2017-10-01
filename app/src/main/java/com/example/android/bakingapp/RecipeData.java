@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class RecipeData implements Parcelable {
     public String name;
     int servings;
+    public String thumbnailLocation;
     public ArrayList<Ingredient> ingredients = new ArrayList<>();
     ArrayList<RecipeStep> recipeSteps = new ArrayList<>();
 
@@ -28,6 +29,7 @@ public class RecipeData implements Parcelable {
     RecipeData(Parcel in) {
         name = in.readString();
         servings = in.readInt();
+        thumbnailLocation = in.readString();
         ingredients = in.createTypedArrayList(Ingredient.CREATOR);
         recipeSteps = in.createTypedArrayList(RecipeStep.CREATOR);
     }
@@ -36,6 +38,7 @@ public class RecipeData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeInt(servings);
+        dest.writeString(thumbnailLocation);
         dest.writeTypedList(ingredients);
         dest.writeTypedList(recipeSteps);
     }
@@ -56,4 +59,5 @@ public class RecipeData implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -158,7 +159,7 @@ public class IngredientsWidgetService extends RemoteViewsService {
 
             // Whe an ingredient is clicked on take open the app and select the recipe the widget is displaying data for
             Intent fillInIntent = new Intent();
-            if (!recipeName.equals("")) {
+            if (!TextUtils.isEmpty(recipeName)) {
                 Bundle extras = new Bundle();
                 String widgetSelectedRecipeKey = context.getString(R.string.wiget_selected_recipe_name);
                 extras.putString(widgetSelectedRecipeKey, recipeName);

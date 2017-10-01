@@ -83,14 +83,15 @@ public class RecipeAllStepsListActivity extends AppCompatActivity implements Loa
             setupAllStepsListView(recipeStepsListView);
         }
 
-        if (findViewById(R.id.recipe_detail_container) != null) {
-            Log.v(TAG, "The device is using the two pane layout");
+        // Check if the device has a smallest screen width of 700dp to determine if
+        // the app should be in two-pane mode
+        boolean isTabletLayout = getResources().getBoolean(R.bool.isTablet);
+        mTwoPane = isTabletLayout;
 
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w700dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
+        if (isTabletLayout) {
+            Log.v(TAG, "The device is using the two pane layout");
+        } else {
+            Log.v(TAG, "The device is using the single pane layout");
         }
 
         // If the device is using the tablet display remove the toolbar and display

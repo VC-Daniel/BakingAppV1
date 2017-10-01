@@ -17,10 +17,14 @@
     <string name="widget_no_recipe_selected_hint">No Recipe Selected</string>
     <string name="single_recipe_data">SINGLE_RECIPE_VALUE</string>
     <string name="wiget_selected_recipe_name">widgetSelectedRecipeName</string>
+    <string name="exoplayer_video_position">ExoPlayerVideoPosition</string>
     <string name="ingredients_header_label">%s Ingredients:</string>
     <string name="fall_back_recipe_name">Recipe</string>
     <string name="servings_label">Servings: %d</string>
     <string name="ingredients_label">Ingredients: %d</string>
     <string name="steps_label">Steps: %d</string>
     <string name="internet_error_message">Error encountered while getting the recipe data</string>
+    <string name="no_internet_error_message">No internet connection. Connect to the internet to view recipes.</string>
+    <string name="recipe_thumbnail_content_description">A thumbnail of this recipe</string>
+    <string name="recipe_step_thumbnail">A thumbnail for this recipe step.</string>
 </resources>

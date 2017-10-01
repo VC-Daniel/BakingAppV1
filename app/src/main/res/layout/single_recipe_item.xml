@@ -51,5 +51,18 @@
         android:layout_alignLeft="@+id/singleRecipeNumberOfIngredients"
         android:layout_alignStart="@+id/singleRecipeNumberOfIngredients"
         android:layout_below="@+id/singleRecipeNumberOfIngredients"
-        android:layout_marginTop="@dimen/text_margin" />
+        android:layout_marginTop="@dimen/text_margin"
+        />
+
+    <ImageView
+        android:id="@+id/recipeThumbnailImage"
+        android:layout_width="@dimen/thumbnail_width"
+        android:layout_height="@dimen/thumbnail_height"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_below="@+id/singleRecipeServing"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/recipe_thumbnail_content_description" />
+
 </RelativeLayout>

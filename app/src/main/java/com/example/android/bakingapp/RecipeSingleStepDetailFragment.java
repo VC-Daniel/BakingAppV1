@@ -4,11 +4,13 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -30,6 +32,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import fr.arnaudguyon.logfilter.Log;
 
@@ -46,9 +49,13 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
 
     SimpleExoPlayerView mSimplePlayerView;
     private SimpleExoPlayer mExoPlayer;
+    ImageView mThumbnailImageView;
 
     // the data for the selected recipe step
     private RecipeStep mItem;
+
+    // saves the current position the user is in the video if the video needs to be resumed
+    Long mVideoPosition = 0L;
 
     private static final String TAG = RecipeSingleStepDetailFragment.class.getSimpleName();
 
@@ -87,7 +94,7 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
 
         // check if there is a video to display for the selected step. If the is a video display it,
         // otherwise hide the simple player
-        if (mediaUri != null && !mediaUri.equals("")) {
+        if (mediaUri != null && !TextUtils.isEmpty(mediaUri)) {
             Log.v(TAG, "Initializing the media player to play the step details from: " + mediaUri);
 
             // Create an instance of the ExoPlayer.
@@ -113,6 +120,7 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
             // Prepare the media and begin playing as soon as the video can
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.seekTo(mVideoPosition);
 
         } else {
             Log.v(TAG, "No video was provided for this step");
@@ -129,12 +137,14 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
     private void releasePlayer() {
         Log.v(TAG, "Releasing the media player");
         if (mExoPlayer != null) {
+            // store the current position of the video if the activity is being rotated or the app
+            // is going to reused later
+            mVideoPosition = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
         }
-        if(mSimplePlayerView != null)
-        {
+        if (mSimplePlayerView != null) {
             mSimplePlayerView.setEnabled(false);
             mSimplePlayerView = null;
         }
@@ -147,10 +157,28 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
     }
 
     @Override
+    public void onPause() {
+        releasePlayer();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        releasePlayer();
+        super.onStop();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        String videoPositionKey = getString(R.string.exoplayer_video_position);
+        if (savedInstanceState != null && savedInstanceState.containsKey(videoPositionKey)) {
+            mVideoPosition = savedInstanceState.getLong(videoPositionKey);
+        }
 
         View rootView = inflater.inflate(R.layout.recipe_single_step_detail, container, false);
         mSimplePlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+        mThumbnailImageView = (ImageView) rootView.findViewById(R.id.step_thumbnail);
 
         // If the user is on a phone and is in landscape orientation then display the video as full screen
         // The logic to set the size of the simple player is based off the stack overflow question at:
@@ -165,17 +193,33 @@ public class RecipeSingleStepDetailFragment extends Fragment implements ExoPlaye
 
         // Display the passed in recipe step's description and video
         if (mItem != null) {
-            if (mItem.description.equals("") && mItem.videoURL.equals("")) {
+            if (TextUtils.isEmpty(mItem.description) && TextUtils.isEmpty(mItem.videoURL)) {
                 Log.e(TAG, "The recipe step contains no video or description. Step short Description: " + mItem.shortDescription);
             }
 
             ((TextView) rootView.findViewById(R.id.recipe_detail)).setText(mItem.description);
+
+            // If there is a thumbnail for the recipe step display it, otherwise hide the image view
+            if (!TextUtils.isEmpty(mItem.thumbnailURL)) {
+                Picasso.with(getContext()).load(mItem.thumbnailURL).into(mThumbnailImageView);
+            } else {
+                mThumbnailImageView.setVisibility(View.GONE);
+            }
+
             initializePlayer(mItem.videoURL);
         }
 
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // save the current position the video player is in
+        String videoPositionKey = getString(R.string.exoplayer_video_position);
+        outState.putLong(videoPositionKey, mVideoPosition);
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {

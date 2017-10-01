@@ -20,29 +20,36 @@ android {
 }
 
 dependencies {
+    ext {
+        supportLibVersion = '25.4.0'
+        espressoLibVersion = '3.0.1'
+    }
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
+    androidTestCompile("com.android.support.test.espresso:espresso-core:${espressoLibVersion}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:support-v4:25.4.0'
-    compile 'com.android.support:recyclerview-v7:25.4.0'
-    compile 'com.android.support:design:25.4.0'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
     testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:25.4.0'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:3.0.1'
-    androidTestCompile('com.android.support.test.espresso:espresso-contrib:3.0.1') {
+    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:${espressoLibVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoLibVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-contrib:${espressoLibVersion}"
+    androidTestCompile("com.android.support.test.espresso:espresso-contrib:${espressoLibVersion}") {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'com.android.support.test:runner:0.5'
-    compile 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
+    compile "com.android.support.test.espresso:espresso-idling-resource:${espressoLibVersion}"
 
     compile 'com.github.smart-fun:LogFilter:1.0.1'
 }

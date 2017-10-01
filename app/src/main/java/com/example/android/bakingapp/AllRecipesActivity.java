@@ -10,10 +10,12 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.utilities.ConnectivityReceiver;
 import com.example.android.bakingapp.utilities.NetworkUtils;
 import com.example.android.bakingapp.utilities.SimpleIdlingResource;
 
@@ -24,7 +26,8 @@ import fr.arnaudguyon.logfilter.Log;
 /**
  * Display all recipes retrieved from the recipe data api.
  */
-public class AllRecipesActivity extends AppCompatActivity implements RecipeDataAdapter.RecipeDataAdapterOnClickHandler {
+public class AllRecipesActivity extends AppCompatActivity implements RecipeDataAdapter.RecipeDataAdapterOnClickHandler,
+        ConnectivityReceiver.ConnectivityReceiverListener {
 
     RecipeDataAdapter mRecipeDataAdapter;
     RecyclerView mRecyclerView;
@@ -43,6 +46,8 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
     // loaded into in the UI
     SimpleIdlingResource idlingResource;
 
+    private static AllRecipesActivity mInstance;
+
     @VisibleForTesting
     @NonNull
     public SimpleIdlingResource getIdlingResource() {
@@ -52,9 +57,24 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
         return idlingResource;
     }
 
+    public static synchronized AllRecipesActivity getInstance() {
+        return mInstance;
+    }
+
+    /**
+     * Set this activity as a listener for when the devices connectivity changes
+     *
+     * @param listener
+     */
+    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
+        ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getIdlingResource();
+
+        mInstance = this;
 
         // While the recipes are being loaded notify any tests that the resource is not idle
         if (idlingResource != null) {
@@ -101,14 +121,23 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
                 idlingResource.setIdleState(true);
             }
 
-            if (!widgetChosenRecipe.equals("")) {
+            if (!TextUtils.isEmpty(widgetChosenRecipe)) {
                 // If a recipe was selected by clicking on the widget then continue to the recipe's details
                 chooseRecipe(widgetChosenRecipe);
             }
         } else {
             Log.i(TAG, "No previously saved recipe data, loading data from the api");
-            // if no previous data exists then retrieve recipe data to populate the grid
-            loadRecipeData();
+            // if no previous data exists then retrieve recipe data to populate the grid, but
+            // first check if the device is connected to the internet and if it isn't then display
+            // an error
+            if (ConnectivityReceiver.isConnected()) {
+                loadRecipeData();
+            } else {
+                Log.i(TAG, "No internet connection, unable to load data from the api");
+                mErrorTextView.setVisibility(View.VISIBLE);
+                String noInternetErrorMessage = getString(R.string.no_internet_error_message);
+                mErrorTextView.setText(noInternetErrorMessage);
+            }
         }
     }
 
@@ -124,6 +153,9 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
     @Override
     protected void onResume() {
         super.onResume();
+
+        // register connection status listener
+        AllRecipesActivity.getInstance().setConnectivityListener(this);
     }
 
     /**
@@ -134,7 +166,7 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
      */
     private void chooseRecipe(String widgetSelectedRecipeName) {
         // If the recipe name is invalid log it and cancel the attempt to load the recipe data
-        if (widgetSelectedRecipeName == null || widgetSelectedRecipeName.equals("")) {
+        if (widgetSelectedRecipeName == null || TextUtils.isEmpty(widgetSelectedRecipeName)) {
             Log.e(TAG, "The user selected a recipe on the widget with no name");
             return;
         }
@@ -248,7 +280,7 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
 
             // Check if the user has selected a recipe by clicking on an ingredient in the widget
             // and if so go to the recipe's details
-            if (!widgetChosenRecipe.equals("")) {
+            if (!TextUtils.isEmpty(widgetChosenRecipe)) {
                 chooseRecipe(widgetChosenRecipe);
             }
         }
@@ -272,5 +304,24 @@ public class AllRecipesActivity extends AppCompatActivity implements RecipeDataA
         Log.v(TAG, "Handling user click on the recipe " + recipeData.name);
         // launch the recipe detail activity
         startActivity(intent);
+    }
+
+    /**
+     * if the device connects to the internet check if we need to load the recipe data. You could
+     * enter this state wher you don't have recipe data if you started the app while not connected
+     * to the internet
+     *
+     * @param isConnected
+     */
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if (isConnected && mRecipeDataAdapter.mRecipeData.size() <= 0) {
+            // set the error message text view back to the default error message
+            String noInternetErrorMessage = getString(R.string.internet_error_message);
+            mErrorTextView.setText(noInternetErrorMessage);
+
+            Log.i(TAG, "Internet connection has been re-established, loading data from the api");
+            loadRecipeData();
+        }
     }
 }

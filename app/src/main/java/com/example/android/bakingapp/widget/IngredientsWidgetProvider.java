@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import com.example.android.bakingapp.AllRecipesActivity;
@@ -39,7 +40,7 @@ public class IngredientsWidgetProvider extends AppWidgetProvider {
             Log.v(TAG, "updating the widget for the recipe: " + recipeData.name);
 
             // set the recipe name textView to the selected recipe
-            if (!recipeData.name.equals("")) {
+            if (!TextUtils.isEmpty(recipeData.name)) {
                 String ingredientsLabel = context.getString(R.string.ingredients_header_label, recipeData.name);
                 remoteViews.setTextViewText(R.id.recipeName, ingredientsLabel);
             } else {

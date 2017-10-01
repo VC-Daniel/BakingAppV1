@@ -48,6 +48,7 @@ public final class BakingRemoteDataJsonUtils {
 
             singleRecipe.servings = singleRecipeJSON.getInt("servings");
             singleRecipe.name = singleRecipeJSON.getString("name");
+            singleRecipe.thumbnailLocation = singleRecipeJSON.getString("image");
 
             Log.v(TAG, "Created the RecipeData objects for the recipe " + singleRecipe.name);
 

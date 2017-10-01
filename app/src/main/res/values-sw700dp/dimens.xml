@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="large_button_size">175dp</dimen>
+    <dimen name="thumbnail_height_large">250dp</dimen>
 </resources>
